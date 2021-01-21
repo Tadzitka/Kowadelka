@@ -1,5 +1,5 @@
 import pgzrun
-
+import random
 
 class Gracz(Actor):
     def __init__(self, x, y):
@@ -83,11 +83,32 @@ class Gracz(Actor):
         self.czy_lustro = False
         self.animacja()
 
+class Kowadlo(Actor):
+    def __init__(self, x, y):
+        super(Kowadlo, self).__init__("kowadlo", (x, y))
+        self.x = x
+        self.y = y
+    def opadanie(self):
+        self.y += 2
+
+class Przeszkody():
+    def __init__(self):
+        self.l=[]
+        for i in range(3):
+            self.l. append(Kowadlo(random.randint(50, 550), -random.randint(100,500)))
+    def update(self):
+        for i in self.l:
+            i.opadanie()
+    def draw(self):
+        for i in self.l:
+            i.draw()
 
 
+pulapka = Przeszkody()
 howacz = Gracz(100, 507)
 def update():
     howacz.update()
+    pulapka.update()
     if keyboard.left or keyboard.right:
         if keyboard.left:
             howacz.lewo()
@@ -103,6 +124,7 @@ def draw():
     for i in range(30):
         screen.blit("trawa", (-10+(70*i), 550))
     howacz.draw()
+    pulapka.draw()
 
 
 
