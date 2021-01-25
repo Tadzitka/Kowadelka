@@ -75,13 +75,15 @@ class Gracz(Actor):
         self.fps += 0.5
         self.fps = self.fps%11
     def lewo(self):
-        self.x-=2
-        self.czy_lustro = True
-        self.animacja()
+        if self.x >= 36:
+            self.x-=2
+            self.czy_lustro = True
+            self.animacja()
     def prawo(self):
-        self.x+=2
-        self.czy_lustro = False
-        self.animacja()
+        if self.x <= 764:
+            self.x+=2
+            self.czy_lustro = False
+            self.animacja()
 
 class Kowadlo(Actor):
     def __init__(self, x, y):
@@ -99,11 +101,40 @@ class Przeszkody():
     def update(self):
         for i in self.l:
             i.opadanie()
+            if i.y > 650:
+                i.y = -random.randint(100,500)
+                i.x = random.randint(50, 550)
     def draw(self):
         for i in self.l:
             i.draw()
+class Zycie():
+    def __init__(self,x,y):
+        self.s1 = Actor("serce")
+        self.s2 = Actor("serce")
+        self.s3 = Actor("serce")
+        self.s1.pos = x,y
+        self.s2.pos = x + 60,y
+        self.s3.pos = x + 120,y
+        self.licznik = 3
+        self.zmiana = 0
 
+    def zmniejsz(self):
+        if self.zmiana == 0:
+            self.licznik -= 1
+            self.zmiana = 1
+            clock.schedule_unique(Z, 1.0)
+    def draw(self):
+        if self.licznik == 1:
+            self.s1.draw()
+        elif self.licznik == 2:
+            self.s1.draw()
+            self.s2.draw()
+        elif self.licznik == 3:
+            self.s1.draw()
+            self.s2.draw()
+            self.s3.draw()
 
+zycko = Zycie(30,30)
 pulapka = Przeszkody()
 howacz = Gracz(100, 507)
 def update():
@@ -125,6 +156,7 @@ def draw():
         screen.blit("trawa", (-10+(70*i), 550))
     howacz.draw()
     pulapka.draw()
+    zycko.draw()
 
 
 
