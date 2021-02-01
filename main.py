@@ -1,6 +1,8 @@
 import pgzrun
 import random
 
+status = 0
+
 class Gracz(Actor):
     def __init__(self, x, y):
         super(Gracz, self).__init__("ludzik1", (x, y))
@@ -117,12 +119,13 @@ class Zycie():
         self.s3.pos = x + 120,y
         self.licznik = 3
         self.zmiana = 0
-
+    def usuniencie_bloku(self):
+        self.zmiana = 0
     def zmniejsz(self):
         if self.zmiana == 0:
             self.licznik -= 1
             self.zmiana = 1
-            clock.schedule_unique(Z, 1.0)
+            clock.schedule_unique(self.usuniencie_bloku, 0.25)
     def draw(self):
         if self.licznik == 1:
             self.s1.draw()
@@ -138,6 +141,7 @@ zycko = Zycie(30,30)
 pulapka = Przeszkody()
 howacz = Gracz(100, 507)
 def update():
+    global status
     howacz.update()
     pulapka.update()
     if keyboard.left or keyboard.right:
@@ -147,16 +151,32 @@ def update():
         if keyboard.right:
             howacz.prawo()
             howacz.ruch = True
-    else:
-        howacz.ruch = False
+        else:
+            howacz.ruch = False
+    if keyboard.space:
+        status = 1
+    if zycko.licznik == 0:
+        status = 2
+    for i in pulapka.l:
+        if i.collidepoint(howacz.midtop) or i.collidepoint(howacz.topleft) or i.collidepoint(howacz.topright) or i.collidepoint(howacz.midleft) or i.collidepoint(howacz.midright) or i.collidepoint(howacz.center) or i.collidepoint(howacz.midbottom):
+            zycko.zmniejsz()
+            i.y = -random.randint(100, 500)
+            i.x = random.randint(50, 550)
 def draw():
+    global status
     screen.clear()
     screen.fill("#0099ff")
     for i in range(30):
         screen.blit("trawa", (-10+(70*i), 550))
-    howacz.draw()
-    pulapka.draw()
-    zycko.draw()
+    if status == 0:
+        screen.draw.text("Kliknij SPACE aby rozpocząć", (100, 300), color="red", fontsize=60)
+    if status == 1:
+        howacz.draw()
+        pulapka.draw()
+        zycko.draw()
+    if status == 2:
+        screen.draw.text("Przegrałeś :(", (200, 300), color="red", fontsize=60)
+
 
 
 
